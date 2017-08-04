@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ProjectX</string>
+    <string name="home_button">Home Button</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="back_button">Back Button</string>
+    <string name="mic_button">Mic button</string>
+    <string name="recording">Recording!</string>
+</resources>
