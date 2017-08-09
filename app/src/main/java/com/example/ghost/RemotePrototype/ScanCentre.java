@@ -43,4 +43,29 @@ public class ScanCentre extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        if (mNsdHelper != null) {
+            mNsdHelper.tearDown();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNsdHelper != null) {
+            mNsdHelper.initializeNsd();
+            mNsdHelper.registerService(mNsdHelper.getmLocalPort());
+            mNsdHelper.discoverServices();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mNsdHelper.tearDown();
+        //mConnection.tearDown();
+        super.onDestroy();
+    }
 }
