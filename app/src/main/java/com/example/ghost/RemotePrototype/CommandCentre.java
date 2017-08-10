@@ -1,15 +1,17 @@
 package com.example.ghost.RemotePrototype;
 
 import android.content.Context;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -24,12 +26,9 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
     View slideText;
     View recordPanel;
 
-    private static final int MIN_INTERVAL_TIME = 700;
-    private static final int MAX_INTERVAL_TIME = 60000;
-
-
-    private float startedDraggingY = -1;
-    private float distCanMove = dp(80);
+    private static final String AUDIO_RECORDER_FILE_EXT_3GP = ".3gp";
+    private static final String AUDIO_RECORDER_FOLDER = "AudioRecorder";
+    private MediaRecorder recorder = null;
     private boolean mouseMoved = false;
 
     private float initX = 0;
@@ -92,6 +91,64 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
                 return true;
             }
         });
+
+        micButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        AppLog.logString("Start Recording");
+                        startRecording();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        AppLog.logString("stop Recording");
+                        stopRecording();
+                        break;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private String getFilename() {
+        String filepath = Environment.getExternalStorageDirectory().getPath();
+        File file = new File(filepath, AUDIO_RECORDER_FOLDER);
+
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_3GP);
+    }
+
+    private void startRecording() {
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setOutputFile(getFilename());
+        recorder.setOnErrorListener(errorListener);
+        recorder.setOnInfoListener(infoListener);
+
+        try {
+            recorder.prepare();
+            recorder.start();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopRecording() {
+        if (null != recorder) {
+            recorder.stop();
+            recorder.reset();
+            recorder.release();
+
+            recorder = null;
+        }
     }
 
     @Override
@@ -128,13 +185,19 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void startRecord() {
-        Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show();
-    }
+    private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
+        @Override
+        public void onError(MediaRecorder mr, int what, int extra) {
+            AppLog.logString("Error: " + what + ", " + extra);
+        }
+    };
 
-    private void stopRecord() {
-        Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show();
-    }
+    private MediaRecorder.OnInfoListener infoListener = new MediaRecorder.OnInfoListener() {
+        @Override
+        public void onInfo(MediaRecorder mr, int what, int extra) {
+            AppLog.logString("Warning: " + what + ", " + extra);
+        }
+    };
 
     public static int dp(float value) {
         return (int) Math.ceil(1 * value);
