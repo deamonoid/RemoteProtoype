@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,10 +99,12 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         AppLog.logString("Start Recording");
+                        Toast.makeText(getBaseContext(), "Recordng started", Toast.LENGTH_SHORT).show();
                         startRecording();
                         break;
                     case MotionEvent.ACTION_UP:
                         AppLog.logString("stop Recording");
+                        Toast.makeText(getBaseContext(), "Recording stopped", Toast.LENGTH_SHORT).show();
                         stopRecording();
                         break;
                 }
@@ -134,9 +137,7 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
         try {
             recorder.prepare();
             recorder.start();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
     }
