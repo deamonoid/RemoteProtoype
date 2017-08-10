@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProjectX</string>
+    <string name="app_name">Remote Prototype</string>
     <string name="home_button">Home Button</string>
     <string name="menu_button">Menu Button</string>
     <string name="back_button">Back Button</string>
