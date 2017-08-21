@@ -6,6 +6,6 @@ package com.example.ghost.RemotePrototype;
 
 public class Constants {
 
-    public static String SERVER_IP = "192.168.1.104";
+    //public static String SERVER_IP = "192.168.1.104";
     public static int SERVER_PORT = 8998;
 }

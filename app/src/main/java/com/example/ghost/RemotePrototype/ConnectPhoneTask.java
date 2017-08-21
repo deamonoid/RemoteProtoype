@@ -1,6 +1,7 @@
 package com.example.ghost.RemotePrototype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -43,6 +44,9 @@ public class ConnectPhoneTask extends AsyncTask<String,Void,Boolean> {
             if(isConnected) {
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket
                         .getOutputStream())), true);
+                Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), CommandCentre.class);
+                context.startActivity(intent);
             }
         }catch (IOException e){
             Log.e("Remote", "Error while creating OutWriter", e);

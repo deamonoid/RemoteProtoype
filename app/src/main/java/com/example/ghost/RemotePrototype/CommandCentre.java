@@ -12,8 +12,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -31,6 +34,7 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
     private static final String AUDIO_RECORDER_FOLDER = "AudioRecorder";
     private MediaRecorder recorder = null;
     private boolean mouseMoved = false;
+    private static final String TAG = CommandCentre.class.getSimpleName();
 
     private float initX = 0;
     private float initY = 0;
@@ -147,8 +151,30 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
             recorder.stop();
             recorder.reset();
             recorder.release();
-
+            sendFile();
             recorder = null;
+        }
+    }
+
+    public void sendFile() {
+
+        try {
+
+            String filepath = Environment.getExternalStorageDirectory().getPath();
+            File file = new File(filepath, AUDIO_RECORDER_FOLDER);
+
+            File f = new File(file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_3GP);
+            byte[] bytes = new byte[(int) f.length()];
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
+            bis.read(bytes, 0, bytes.length);
+
+            OutputStream outputStream = socket.getOutputStream();
+            outputStream.write(bytes, 0, bytes.length);
+            outputStream.flush();
+            socket.close();
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error in sending files", e);
         }
     }
 

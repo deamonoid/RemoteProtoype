@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -45,6 +46,18 @@ public class ScanCentre extends AppCompatActivity {
             public void onClick(View view) {
 
                 new ScanIpTask().execute();
+            }
+        });
+
+        listViewIp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedFromList =(listViewIp.getItemAtPosition(i).toString());
+                /*Intent intent = new Intent(ScanCentre.this, CommandCentre.class);
+                intent.putExtra(EXTRA_MESSAGE, selectedFromList);
+                startActivity(intent);*/
+                ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
+                connectPhoneTask.execute(selectedFromList);
             }
         });
     }
@@ -101,4 +114,6 @@ public class ScanCentre extends AppCompatActivity {
             Toast.makeText(ScanCentre.this, "Done", Toast.LENGTH_LONG).show();
         }
     }
+
+
 }
