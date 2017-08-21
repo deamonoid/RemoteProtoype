@@ -56,7 +56,7 @@ public class ScanCentre extends AppCompatActivity {
                 /*Intent intent = new Intent(ScanCentre.this, CommandCentre.class);
                 intent.putExtra(EXTRA_MESSAGE, selectedFromList);
                 startActivity(intent);*/
-                ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
+                ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask(getApplicationContext());
                 connectPhoneTask.execute(selectedFromList);
             }
         });
