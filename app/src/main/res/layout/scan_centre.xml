@@ -5,20 +5,18 @@
     android:layout_margin="70dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/serverName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="20dp"
-        android:text="Server name" />
-
     <Button
-        android:id="@+id/connectButton"
+        android:id="@+id/scanButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:text="Connect" />
+        android:text="Scan" />
+
+
+    <ListView
+        android:id="@+id/listviewip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

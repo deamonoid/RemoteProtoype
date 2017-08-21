@@ -1,11 +1,18 @@
 package com.example.ghost.RemotePrototype;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /**
  * This will scan the available server
@@ -13,59 +20,85 @@ import java.net.InetAddress;
 
 public class ScanCentre extends AppCompatActivity {
 
-    Button connect;
-    NsdHelper mNsdHelper;
-    int mServerPort;
-    InetAddress mServerHost;
+    private Button scanbtn;
+    private ListView listViewIp;
+
+    ArrayList<String> ipList;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scan_centre);
 
-        connect = (Button) findViewById(R.id.connectButton);
-        connect.setOnClickListener(new View.OnClickListener() {
+        listViewIp = (ListView) findViewById(R.id.listviewip);
+
+        ipList = new ArrayList();
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, ipList);
+        listViewIp.setAdapter(adapter);
+
+
+        scanbtn = (Button) findViewById(R.id.scanButton);
+        scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                mNsdHelper.initializeServerSocket();
-                int mPort = mNsdHelper.getmLocalPort();
-                mNsdHelper.initializeNsd();
-                mNsdHelper.registerService(mPort);
-                mNsdHelper.discoverServices();
-                mServerPort = mNsdHelper.getInternetPort();
-                mServerHost = mNsdHelper.getInternetHost();
-
-                /*ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
-                connectPhoneTask.execute(Constants.SERVER_IP);
-                Intent intent = new Intent(ScanCentre.this, CommandCentre.class);
-                startActivity(intent);*/
+                new ScanIpTask().execute();
             }
         });
     }
 
-    @Override
-    protected void onPause() {
-        if (mNsdHelper != null) {
-            mNsdHelper.tearDown();
-        }
-        super.onPause();
-    }
+    private class ScanIpTask extends AsyncTask<Void, String, Void> {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mNsdHelper != null) {
-            mNsdHelper.initializeNsd();
-            mNsdHelper.registerService(mNsdHelper.getmLocalPort());
-            mNsdHelper.discoverServices();
-        }
-    }
+        /*
+        Scan IP 192.168.1.100~192.168.1.110
+        you should try different timeout for your network/devices
+         */
+        static final String subnet = "192.168.1.";
+        static final int lower = 100;
+        static final int upper = 110;
+        static final int timeout = 5000;
 
-    @Override
-    protected void onDestroy() {
-        mNsdHelper.tearDown();
-        //mConnection.tearDown();
-        super.onDestroy();
+        @Override
+        protected void onPreExecute() {
+            ipList.clear();
+            adapter.notifyDataSetInvalidated();
+            Toast.makeText(ScanCentre.this, "Scan IP...", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            for (int i = lower; i <= upper; i++) {
+                String host = subnet + i;
+
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(host);
+                    if (inetAddress.isReachable(timeout)) {
+                        publishProgress(inetAddress.toString());
+                    }
+
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            ipList.add(values[0]);
+            adapter.notifyDataSetInvalidated();
+            Toast.makeText(ScanCentre.this, values[0], Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(ScanCentre.this, "Done", Toast.LENGTH_LONG).show();
+        }
     }
 }
