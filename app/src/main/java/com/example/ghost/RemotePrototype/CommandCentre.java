@@ -41,9 +41,9 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
     private float disX = 0;
     private float disY = 0;
 
-    ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
+    ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask(getApplicationContext());
     boolean isConnected = connectPhoneTask.getIsConnected();
-    Context context = connectPhoneTask.getContext();
+    Context context = getApplicationContext();
     Socket socket = connectPhoneTask.getSocket();
     PrintWriter out = connectPhoneTask.getOut();
 
