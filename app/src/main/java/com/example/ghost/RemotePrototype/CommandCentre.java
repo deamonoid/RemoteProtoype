@@ -58,9 +58,7 @@ public class CommandCentre extends AppCompatActivity implements View.OnClickList
         backButton = (ImageButton) findViewById(R.id.backButton);
         micButton = (ImageButton) findViewById(R.id.micButton);
 
-        slideText = findViewById(R.id.slideText);
-        recordPanel = findViewById(R.id.record_panel);
-
+        
         homeButton.setOnClickListener(this);
         menuButton.setOnClickListener(this);
         backButton.setOnClickListener(this);
