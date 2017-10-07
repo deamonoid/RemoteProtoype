@@ -1,8 +1,12 @@
 package com.example.ghost.RemotePrototype;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -52,7 +56,7 @@ public class ScanCentre extends AppCompatActivity {
         listViewIp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedFromList =(listViewIp.getItemAtPosition(i).toString());
+                String selectedFromList = (listViewIp.getItemAtPosition(i).toString());
                 /*Intent intent = new Intent(ScanCentre.this, CommandCentre.class);
                 intent.putExtra(EXTRA_MESSAGE, selectedFromList);
                 startActivity(intent);*/
@@ -60,6 +64,13 @@ public class ScanCentre extends AppCompatActivity {
                 connectPhoneTask.execute(selectedFromList);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.scan_menu, menu);
+        return true;
     }
 
     private class ScanIpTask extends AsyncTask<Void, String, Void> {
@@ -115,5 +126,16 @@ public class ScanCentre extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()) {
+            case R.id.changePort:
+                Intent intent = new Intent(this, ChangePort.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
